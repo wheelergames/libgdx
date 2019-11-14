@@ -42,13 +42,13 @@ public class AndroidMusic implements Music {
 	// current mediaPlayer which is playing
 	private int mediaPlayerIndex = -1;
 
-
 	private final AndroidMusic.MediaPlayerWrapper mediaPlayerWrapper = new AndroidMusic.MediaPlayerWrapper();
 	private AndroidFileHandle aHandle;
 	private FileDescriptor fd;
 	private int type;
 	private final AndroidAudio audio;
 	private boolean isPrepared = true;
+	private boolean isLooping;
 	protected boolean wasPlaying = false;
 	private float volume = 1f;
 	protected OnCompletionListener onCompletionListener;
@@ -91,20 +91,7 @@ public class AndroidMusic implements Music {
 
 	@Override
 	public boolean isLooping () {
-		synchronized (mediaPlayerWrapper) {
-			for (int i = 0; i < mediaPlayerWrapper.size(); i++) {
-				MediaPlayer mediaPlayer = mediaPlayerWrapper.getValue(i);
-				if (mediaPlayer == null) return false;
-				try {
-					return mediaPlayer.isLooping();
-				} catch (Exception e) {
-					// NOTE: isLooping() can potentially throw an exception and crash the application
-					e.printStackTrace();
-					return false;
-				}
-			}
-			return false;
-		}
+		return isLooping;
 	}
 
 	@Override
@@ -179,12 +166,13 @@ public class AndroidMusic implements Music {
 						break;
 				}
 				mediaPlayerWrapper.getValue(i).setVolume(volume, volume);
-				mediaPlayerWrapper.getValue(i).setOnCompletionListener(completionListener);
+				mediaPlayerWrapper.getValue(i).setOnCompletionListener(isLooping() ? loopingCompletionListener : completionListener);
 			}
 			// set nextMediaPlayers
-			mediaPlayerWrapper.getValue(0).setNextMediaPlayer(mediaPlayerWrapper.getValue(1));
-			mediaPlayerWrapper.getValue(1).setNextMediaPlayer(mediaPlayerWrapper.getValue(2));
-
+			if(isLooping()) {
+				mediaPlayerWrapper.getValue(0).setNextMediaPlayer(mediaPlayerWrapper.getValue(1));
+				mediaPlayerWrapper.getValue(1).setNextMediaPlayer(mediaPlayerWrapper.getValue(2));
+			}
 			mediaPlayerIndex = 0;
 			MediaPlayer mediaPlayer = mediaPlayerWrapper.getValue(mediaPlayerIndex);
 			if (mediaPlayer == null) return;
@@ -213,13 +201,7 @@ public class AndroidMusic implements Music {
 
 	@Override
 	public void setLooping (boolean isLooping) {
-		synchronized (mediaPlayerWrapper) {
-			for (int i = 0; i < mediaPlayerWrapper.size(); i++) {
-				MediaPlayer mediaPlayer = mediaPlayerWrapper.getValue(i);
-				if (mediaPlayer == null) return;
-				mediaPlayer.setLooping(isLooping);
-			}
-		}
+		this.isLooping = isLooping;
 	}
 
 	@Override
@@ -304,6 +286,13 @@ public class AndroidMusic implements Music {
 	 * internal listener which handles looping thing
 	 */
 	private MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
+		@Override
+		public void onCompletion(MediaPlayer mediaPlayer) {
+			if(onCompletionListener != null) onCompletionListener.onCompletion(AndroidMusic.this);
+		}
+	};
+
+	private MediaPlayer.OnCompletionListener loopingCompletionListener = new MediaPlayer.OnCompletionListener() {
 
 		@Override
 		public void onCompletion(MediaPlayer curmp) {
