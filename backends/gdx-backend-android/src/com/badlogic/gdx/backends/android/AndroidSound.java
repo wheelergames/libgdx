@@ -32,6 +32,13 @@ final class AndroidSound implements Sound {
 		this.soundPool = pool;
 		this.manager = manager;
 		this.soundId = soundId;
+
+		soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+			@Override
+			public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+				System.out.println("playSound - sound finished loading");
+			}
+		});
 	}
 
 	@Override

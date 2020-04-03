@@ -703,6 +703,14 @@ public class TextField extends Widget implements Disableable {
 		this.clipboard = clipboard;
 	}
 
+	public int getVisibleTextStart() {
+		return visibleTextStart;
+	}
+
+	public int getVisibleTextEnd() {
+		return visibleTextEnd;
+	}
+
 	public float getPrefWidth () {
 		return 150;
 	}
@@ -1076,7 +1084,7 @@ public class TextField extends Widget implements Disableable {
 	 * @author Nathan Sweet */
 	static public class TextFieldStyle {
 		public BitmapFont font;
-		public Color fontColor;
+		public Color fontColor, cursorColor;
 		/** Optional. */
 		public Color focusedFontColor, disabledFontColor;
 		/** Optional. */
@@ -1090,10 +1098,15 @@ public class TextField extends Widget implements Disableable {
 		}
 
 		public TextFieldStyle (BitmapFont font, Color fontColor, Drawable cursor, Drawable selection, Drawable background) {
+			this(font, fontColor, cursor, fontColor, selection, background);
+		}
+
+		public TextFieldStyle (BitmapFont font, Color fontColor, Drawable cursor, Color cursorColor, Drawable selection, Drawable background) {
 			this.background = background;
 			this.cursor = cursor;
 			this.font = font;
 			this.fontColor = fontColor;
+			this.cursorColor = cursorColor;
 			this.selection = selection;
 		}
 
