@@ -32,6 +32,13 @@ final class AndroidSound implements Sound {
 		this.soundPool = pool;
 		this.manager = manager;
 		this.soundId = soundId;
+
+		soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+			@Override
+			public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+				System.out.println("playSound - sound finished loading");
+			}
+		});
 	}
 
 	@Override
@@ -111,11 +118,7 @@ final class AndroidSound implements Sound {
 
 	@Override
 	public void setLooping (long soundId, boolean looping) {
-		int streamId = (int)soundId;
-
-		soundPool.pause(streamId);
-		soundPool.setLoop(streamId, looping ? -1 : 0);
-		soundPool.resume(streamId);
+		soundPool.setLoop((int)soundId, looping ? -1 : 0);
 	}
 
 	@Override
