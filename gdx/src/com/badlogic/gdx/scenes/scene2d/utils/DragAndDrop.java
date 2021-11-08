@@ -137,6 +137,11 @@ public class DragAndDrop {
 					if (actorX + actor.getWidth() > stage.getWidth()) actorX = stage.getWidth() - actor.getWidth();
 					if (actorY + actor.getHeight() > stage.getHeight()) actorY = stage.getHeight() - actor.getHeight();
 				}
+				if(actor.getParent() != null) {
+					Vector2 vector2 = actor.localToStageCoordinates(new Vector2(0, 0));
+					actorX -= vector2.x - actor.getX();
+					actorY -= vector2.y - actor.getY();
+				}
 				actor.setPosition(actorX, actorY);
 			}
 
