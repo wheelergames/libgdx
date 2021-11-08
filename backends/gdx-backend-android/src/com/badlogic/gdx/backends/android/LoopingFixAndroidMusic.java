@@ -53,15 +53,15 @@ public class LoopingFixAndroidMusic implements Music {
 	private float volume = 1f;
 	protected OnCompletionListener onCompletionListener;
 
-	LoopingFixAndroidMusic(LoopingFixAndroidAudio audio, FileDescriptor fd) {
+	LoopingFixAndroidMusic (LoopingFixAndroidAudio audio, FileDescriptor fd) {
 		this(audio, null, fd, FILE_DESCRIPTOR);
 	}
 
-	LoopingFixAndroidMusic(LoopingFixAndroidAudio audio, AndroidFileHandle aHandle, int type) {
+	LoopingFixAndroidMusic (LoopingFixAndroidAudio audio, AndroidFileHandle aHandle, int type) {
 		this(audio, aHandle, null, type);
 	}
 
-	LoopingFixAndroidMusic(LoopingFixAndroidAudio audio, AndroidFileHandle aHandle, FileDescriptor fd, int type) {
+	LoopingFixAndroidMusic (LoopingFixAndroidAudio audio, AndroidFileHandle aHandle, FileDescriptor fd, int type) {
 		this.audio = audio;
 		this.aHandle = aHandle;
 		this.fd = fd;
@@ -139,38 +139,39 @@ public class LoopingFixAndroidMusic implements Music {
 			for (int i = 0; i < mediaPlayerWrapper.size(); i++) {
 				mediaPlayerWrapper.setValue(i, new MediaPlayer());
 				switch (type) {
-					case FILE_DESCRIPTOR:
-						try {
-							mediaPlayerWrapper.getValue(i).setDataSource(fd);
-							mediaPlayerWrapper.getValue(i).prepare();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						break;
-					case INTERNAL:
-						try {
-							AssetFileDescriptor descriptor = aHandle.getAssetFileDescriptor();
-							mediaPlayerWrapper.getValue(i).setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-							descriptor.close();
-							mediaPlayerWrapper.getValue(i).prepare();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						break;
-					case PATH:
-						try {
-							mediaPlayerWrapper.getValue(i).setDataSource(aHandle.file().getPath());
-							mediaPlayerWrapper.getValue(i).prepare();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						break;
+				case FILE_DESCRIPTOR:
+					try {
+						mediaPlayerWrapper.getValue(i).setDataSource(fd);
+						mediaPlayerWrapper.getValue(i).prepare();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
+				case INTERNAL:
+					try {
+						AssetFileDescriptor descriptor = aHandle.getAssetFileDescriptor();
+						mediaPlayerWrapper.getValue(i).setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(),
+							descriptor.getLength());
+						descriptor.close();
+						mediaPlayerWrapper.getValue(i).prepare();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
+				case PATH:
+					try {
+						mediaPlayerWrapper.getValue(i).setDataSource(aHandle.file().getPath());
+						mediaPlayerWrapper.getValue(i).prepare();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
 				}
 				mediaPlayerWrapper.getValue(i).setVolume(volume, volume);
 				mediaPlayerWrapper.getValue(i).setOnCompletionListener(isLooping() ? loopingCompletionListener : completionListener);
 			}
 			// set nextMediaPlayers
-			if(isLooping()) {
+			if (isLooping()) {
 				mediaPlayerWrapper.getValue(0).setNextMediaPlayer(mediaPlayerWrapper.getValue(1));
 				mediaPlayerWrapper.getValue(1).setNextMediaPlayer(mediaPlayerWrapper.getValue(2));
 			}
@@ -254,7 +255,7 @@ public class LoopingFixAndroidMusic implements Music {
 						mediaPlayer.prepare();
 						isPrepared = true;
 					}
-					mediaPlayer.seekTo((int) (position * 1000));
+					mediaPlayer.seekTo((int)(position * 1000));
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -283,13 +284,11 @@ public class LoopingFixAndroidMusic implements Music {
 		onCompletionListener = listener;
 	}
 
-	/**
-	 * internal listener which handles looping thing
-	 */
+	/** internal listener which handles looping thing */
 	private MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
 		@Override
-		public void onCompletion(MediaPlayer mediaPlayer) {
-			if(onCompletionListener != null) onCompletionListener.onCompletion(LoopingFixAndroidMusic.this);
+		public void onCompletion (MediaPlayer mediaPlayer) {
+			if (onCompletionListener != null) onCompletionListener.onCompletion(LoopingFixAndroidMusic.this);
 		}
 	};
 
@@ -297,7 +296,7 @@ public class LoopingFixAndroidMusic implements Music {
 
 		@SuppressLint("NewApi")
 		@Override
-		public void onCompletion(MediaPlayer curmp) {
+		public void onCompletion (MediaPlayer curmp) {
 			synchronized (mediaPlayerWrapper) {
 				int mpPlaying = 0;
 				int mpNext = 0;
@@ -306,7 +305,7 @@ public class LoopingFixAndroidMusic implements Music {
 					mpNext = 2;
 				} else if (curmp == mediaPlayerWrapper.getValue(1)) {
 					mpPlaying = 2;
-					mpNext = 0;  // corrected, else index out of range
+					mpNext = 0; // corrected, else index out of range
 				} else if (curmp == mediaPlayerWrapper.getValue(2)) {
 					mpPlaying = 0; // corrected, else index out of range
 					mpNext = 1; // corrected, else index out of range
@@ -322,7 +321,8 @@ public class LoopingFixAndroidMusic implements Music {
 					// if we are playing uri
 					mediaPlayerWrapper.setValue(mpNext, new MediaPlayer());
 					AssetFileDescriptor descriptor = aHandle.getAssetFileDescriptor();
-					mediaPlayerWrapper.getValue(mpNext).setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+					mediaPlayerWrapper.getValue(mpNext).setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(),
+						descriptor.getLength());
 					descriptor.close();
 					mediaPlayerWrapper.getValue(mpNext).prepare();
 					// set listener to mp3
@@ -340,32 +340,26 @@ public class LoopingFixAndroidMusic implements Music {
 		}
 	};
 
-	/**
-	 * pause current playing session
-	 */
-	public void newPause() {
+	/** pause current playing session */
+	public void newPause () {
 		synchronized (mediaPlayerWrapper) {
 			if (state == STATE_PLAYING) {
 				mediaPlayerWrapper.getValue(mediaPlayerIndex).pause();
-				//Log.d("BZMediaPlayer", "pausing");
+				// Log.d("BZMediaPlayer", "pausing");
 				state = STATE_PAUSED;
 			}
 		}
 	}
 
-	/**
-	 * get current state
-	 * @return
-	 */
-	public int getState() {
+	/** get current state
+	 * @return */
+	public int getState () {
 		return state;
 	}
 
-	/**
-	 * stop every mediaplayer
-	 */
+	/** stop every mediaplayer */
 	@Override
-	public void stop() {
+	public void stop () {
 		synchronized (mediaPlayerWrapper) {
 			for (int i = 0; i < mediaPlayerWrapper.size(); i++) {
 				MediaPlayer mediaPlayer = mediaPlayerWrapper.getValue(i);
@@ -380,17 +374,18 @@ public class LoopingFixAndroidMusic implements Music {
 
 	class MediaPlayerWrapper {
 		private MediaPlayer[] mediaPlayers = new MediaPlayer[3];
-		public int size() {
+
+		public int size () {
 			return mediaPlayers.length;
 		}
 
-		public void setValue(int index, MediaPlayer value) {
+		public void setValue (int index, MediaPlayer value) {
 			synchronized (mediaPlayers) {
 				mediaPlayers[index] = value;
 			}
 		}
 
-		public MediaPlayer getValue(int index) {
+		public MediaPlayer getValue (int index) {
 			synchronized (mediaPlayers) {
 				return mediaPlayers[index];
 			}
