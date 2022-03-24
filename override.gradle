@@ -1,35 +1,37 @@
 configure([
-	project(":gdx"),
-	project(":backends:gdx-backend-android"),
-	project(":backends:gdx-backend-headless"),
-	project(":backends:gdx-backend-lwjgl"),
-	project(":backends:gdx-backend-lwjgl3"),
-	project(":backends:gdx-backend-robovm"),
-	project(":backends:gdx-backend-gwt"),
-	project(":extensions:gdx-box2d-parent"),
-	project(":extensions:gdx-box2d-parent:gdx-box2d"),
-	project(":extensions:gdx-box2d-parent:gdx-box2d-gwt"),
-	project(":extensions:gdx-bullet"),
-	project(":extensions:gdx-freetype"),
-	project(":extensions:gdx-tools")
-]) {
-	afterEvaluate { project ->
-		publishing.repositories {
-			maven {
-				name = "GitHubPackages"
-				url = uri("https://maven.pkg.github.com/wheelergames/libgdx-wheelergames")
-				credentials {
-					username = "wheelergames"
-					password = System.getenv("BOARDGAME_PUBLISH_PASSWORD") // stored in ~/.bashrc
-				}
-			}
-		}
+        project(":gdx"),
+        project(":backends:gdx-backend-android"),
+        project(":backends:gdx-backend-headless"),
+        project(":backends:gdx-backend-lwjgl"),
+        project(":backends:gdx-backend-lwjgl3"),
+        project(":backends:gdx-backend-robovm"),
+        project(":backends:gdx-backend-gwt"),
+        project(":extensions:gdx-box2d-parent"),
+        project(":extensions:gdx-box2d-parent:gdx-box2d"),
+        project(":extensions:gdx-box2d-parent:gdx-box2d-gwt"),
+        project(":extensions:gdx-bullet"),
+        project(":extensions:gdx-freetype"),
+        project(":extensions:gdx-tools")
+])
 
-		//Optional disable signing instead of setting up gpg key
-		gradle.taskGraph.whenReady {
-			tasks.withType(Sign) {
-				onlyIf { false }
-			}
-		}
-	}
+{
+    afterEvaluate { project ->
+        publishing.repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/wheelergames/libgdx-wheelergames")
+                credentials {
+                    username = "wheelergames"
+                    password = System.getenv("BOARDGAME_PUBLISH_PASSWORD") // stored in ~/.bashrc
+                }
+            }
+        }
+
+        //Optional disable signing instead of setting up gpg key
+        gradle.taskGraph.whenReady {
+            tasks.withType(Sign) {
+                onlyIf { false }
+            }
+        }
+    }
 }
