@@ -936,7 +936,7 @@ public class TexturePacker {
 		public Settings () {
 		}
 
-		/** @see #set(Settings) */
+		/** @see #set (Settings) */
 		public Settings (Settings settings) {
 			set(settings);
 		}

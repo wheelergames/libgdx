@@ -1,0 +1,4 @@
+run ./gradlew publishAllPublicationsToGitHubPackagesRepository
+and that should push to libgdx-wheelergames on github. Takes about 16-17 mins.
+
+All details for this are in override.gradle
