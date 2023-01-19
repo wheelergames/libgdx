@@ -1,15 +1,9 @@
-old version
-
-change the version number in gradle.properties
-
 first to update the natives run
 ./gradlew fetchNatives
 
 then to push everything to github package run 
 ./gradlew publishAllPublicationsToGitHubPackagesRepository
 
-new version
-run ./gradlew publishAllPublicationsToGitHubPackagesRepository
 and that should push to libgdx-wheelergames on github. Takes about 16-17 mins.
 
 All details for this are in override.gradle
