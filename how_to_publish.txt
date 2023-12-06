@@ -1,3 +1,5 @@
+change the version number in gradle.properties
+
 first to update the natives run
 ./gradlew fetchNatives
 

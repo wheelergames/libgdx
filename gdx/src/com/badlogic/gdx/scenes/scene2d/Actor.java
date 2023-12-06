@@ -990,4 +990,6 @@ public class Actor {
 		}
 		return name;
 	}
+
+	public void changeActor(String type, Object value){}
 }
