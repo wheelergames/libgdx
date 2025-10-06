@@ -135,12 +135,12 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	}
 
 	@Override
-	public boolean switchOutputDevice(String deviceIdentifier) {
+	public boolean switchOutputDevice (String deviceIdentifier) {
 		return false;
 	}
 
 	@Override
-	public String[] getAvailableOutputDevices() {
+	public String[] getAvailableOutputDevices () {
 		return new String[0];
 	}
 
