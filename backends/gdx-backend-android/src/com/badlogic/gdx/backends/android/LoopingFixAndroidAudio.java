@@ -131,6 +131,16 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 		}
 	}
 
+	@Override
+	public boolean switchOutputDevice(String deviceIdentifier) {
+		return false;
+	}
+
+	@Override
+	public String[] getAvailableOutputDevices() {
+		return new String[0];
+	}
+
 	/** Creates a new Music instance from the provided FileDescriptor. It is the caller's responsibility to close the file
 	 * descriptor. It is safe to do so as soon as this call returns.
 	 *
