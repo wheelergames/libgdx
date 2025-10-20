@@ -49,13 +49,15 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	public LoopingFixAndroidAudio (Context context, AndroidApplicationConfiguration config) {
 		if (!config.disableAudio) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				AudioAttributes audioAttrib = new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_GAME)
-						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-						.build();
-				soundPool = new SoundPool.Builder().setAudioAttributes(audioAttrib).setMaxStreams(config.maxSimultaneousSounds).build();
-			}else {
-				soundPool = new SoundPool(config.maxSimultaneousSounds, AudioManager.STREAM_MUSIC, 0);// srcQuality: the sample-rate converter quality. Currently has no effect. Use 0 for the default.
+				AudioAttributes audioAttrib = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
+					.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
+				soundPool = new SoundPool.Builder().setAudioAttributes(audioAttrib).setMaxStreams(config.maxSimultaneousSounds)
+					.build();
+			} else {
+				soundPool = new SoundPool(config.maxSimultaneousSounds, AudioManager.STREAM_MUSIC, 0);// srcQuality: the sample-rate
+																																	// converter quality. Currently
+																																	// has no effect. Use 0 for the
+																																	// default.
 			}
 			manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 			if (context instanceof Activity) {
@@ -68,7 +70,7 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	}
 
 	@Override
-	public void pause() {
+	public void pause () {
 		if (soundPool == null) {
 			return;
 		}
@@ -85,7 +87,7 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	}
 
 	@Override
-	public void resume() {
+	public void resume () {
 		if (soundPool == null) {
 			return;
 		}
@@ -98,7 +100,7 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	}
 
 	@Override
-	public void notifyMusicDisposed(AndroidMusic music) {
+	public void notifyMusicDisposed (AndroidMusic music) {
 
 	}
 
@@ -120,24 +122,25 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 		AndroidFileHandle aHandle = (AndroidFileHandle)file;
 
 		try {
-			LoopingFixAndroidMusic music = new LoopingFixAndroidMusic(this, aHandle, aHandle.type() == FileType.Internal ? LoopingFixAndroidMusic.INTERNAL : LoopingFixAndroidMusic.PATH);
+			LoopingFixAndroidMusic music = new LoopingFixAndroidMusic(this, aHandle,
+				aHandle.type() == FileType.Internal ? LoopingFixAndroidMusic.INTERNAL : LoopingFixAndroidMusic.PATH);
 			synchronized (musics) {
 				musics.add(music);
 			}
 			return music;
 		} catch (Exception ex) {
-			throw new GdxRuntimeException("Error loading audio file: " + file
-					+ "\nNote: Internal audio files must be placed in the assets directory.", ex);
+			throw new GdxRuntimeException(
+				"Error loading audio file: " + file + "\nNote: Internal audio files must be placed in the assets directory.", ex);
 		}
 	}
 
 	@Override
-	public boolean switchOutputDevice(String deviceIdentifier) {
+	public boolean switchOutputDevice (String deviceIdentifier) {
 		return false;
 	}
 
 	@Override
-	public String[] getAvailableOutputDevices() {
+	public String[] getAvailableOutputDevices () {
 		return new String[0];
 	}
 
@@ -146,8 +149,7 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 	 *
 	 * @param fd the FileDescriptor from which to create the Music
 	 *
-	 * @see Audio#newMusic(FileHandle)
-	 */
+	 * @see Audio#newMusic(FileHandle) */
 	public Music newMusic (FileDescriptor fd) {
 		if (soundPool == null) {
 			throw new GdxRuntimeException("Android audio is not enabled by the application config.");
@@ -183,8 +185,8 @@ public final class LoopingFixAndroidAudio implements AndroidAudio {
 				descriptor.close();
 				return sound;
 			} catch (IOException ex) {
-				throw new GdxRuntimeException("Error loading audio file: " + file
-						+ "\nNote: Internal audio files must be placed in the assets directory.", ex);
+				throw new GdxRuntimeException(
+					"Error loading audio file: " + file + "\nNote: Internal audio files must be placed in the assets directory.", ex);
 			}
 		} else {
 			try {
